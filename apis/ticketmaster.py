@@ -21,6 +21,4 @@ def get_ticketmaster_data(endpoint, filters={}) -> pd.DataFrame:
 
     data = response.json()
 
-    df = pd.DataFrame(data)
-
-    return df
+    return data
