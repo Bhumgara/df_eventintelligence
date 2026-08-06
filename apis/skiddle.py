@@ -44,5 +44,7 @@ def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
 
     return collective_results
 
-def events_to_df(events:list, keys:list[str]):
+def events_to_df(events:list, keys:list[str]=None):
+    if not keys:
+        keys = ['id','listingid','eventname','startdate','enddate']
     return pd.DataFrame([{k: e.get(k, None) for k in keys} for e in events])

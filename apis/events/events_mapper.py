@@ -2,7 +2,7 @@ from apis.events.client_models.event_model import Event, EventLinks
 from apis.events.event_record import EventRecord
 from typing import Optional
 
-class EventMapper:
+class TMEventMapper:
     @staticmethod
     def map_links_to_list(linksList: Optional[EventLinks]) -> tuple[list[str], list[str]]:
         if not linksList:
@@ -37,3 +37,16 @@ class EventMapper:
                 multipleDays = event.dates.spanMultipleDays,
                 venues = self.map_links_to_list(event.links)[0]
             )
+
+
+from apis.events.client_models.skiddle_event_model import Event as SkEvent
+
+class SkiddleEventMapper:
+    @staticmethod
+    def map_event_to_record(event: SkEvent) -> EventRecord:
+        return EventRecord(
+             name = event.eventname,
+             typeOfEvent = event.eventcode,
+             id = event.id,
+             
+        )
