@@ -12,7 +12,7 @@ class Location(BaseModel):
     longitude: str
     latitude: str
 
-class Venue(BaseModel):
+class TmVenue(BaseModel):
     name: str
     type: str
     id: str

@@ -4,7 +4,7 @@ from typing import Optional
 class LinksHref(BaseModel):
     href: str
 
-class EventLinks(BaseModel):
+class TmEventLinks(BaseModel):
     self: LinksHref
     attractions: Optional[list[LinksHref]] = None
     venues: Optional[list[LinksHref]] = None
@@ -20,11 +20,11 @@ class Dates(BaseModel):
     timezone: str
     spanMultipleDays: bool
 
-class Event(BaseModel):
+class TmEvent(BaseModel):
     name: str
     typeOfEvent: str  = Field(default=None, alias="type")
     id: str
     url: str
     locale: str
     dates: Dates
-    links: Optional[EventLinks]  = Field(default=None, alias="_links")
+    links: Optional[TmEventLinks]  = Field(default=None, alias="_links")

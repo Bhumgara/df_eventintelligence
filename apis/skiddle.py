@@ -1,4 +1,9 @@
 import requests, dotenv, os, pandas as pd
+from pydantic import ValidationError
+
+import events.events_mapper as EMapper
+import events.event_record as ERecord
+import events.client_models.skiddle_event_model as skem
 
 # Global variables setup
 dotenv.load_dotenv()
@@ -44,7 +49,26 @@ def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
 
     return collective_results
 
-def events_to_df(events:list, keys:list[str]=None):
-    if not keys:
-        keys = ['id','listingid','eventname','startdate','enddate']
-    return pd.DataFrame([{k: e.get(k, None) for k in keys} for e in events])
+def validate_events(events:list[dict], return_invalid:bool=False) -> list[ERecord.EventRecord]:
+    # Validate each event has been fetched in the expected format
+    event_models = []
+    invalid_events = []
+    for e in events:
+        try:
+            event_models.append(skem.Event(**e))
+        except ValidationError as e:
+            print(e)
+            invalid_events.append(e)
+
+    # Map validated events to a consistent record format
+    event_records = [EMapper.SkEventMapper.map_event_to_record(e) for e in event_models]
+
+    # Return invalid events if requested
+    if return_invalid: return event_records, invalid_events
+    else: return event_records
+
+def events_to_df(events:list[dict]|list[ERecord.EventRecord], keys:list[str]=None):
+    # Convert EventRecords to dict if not already done so
+    if type(events) != dict:
+        events = [EMapper.TmEventMapper.map_event_record_to_dict(e) for e in events]
+    return pd.DataFrame(events)
