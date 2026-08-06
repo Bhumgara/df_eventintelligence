@@ -34,4 +34,19 @@ class VenuesProcessor:
             raise Exception('No venues match schema.')
 
         return valid_venues, invalid_venues
-        
+
+    def rename_venues_columns(df):
+        return df.rename(columns={
+            'id': 'venue_id',
+            'name': 'venue_name',
+            'type': 'venue_type',
+            'city': 'venue_city',
+            'country': 'venue_country',
+            'postalCode': 'venue_postal_code',
+            'longitude': 'venue_longitude',
+            'latitude': 'venue_latitude',
+        }, inplace=True)
+
+
+    def drop_duplicate(df: DataFrame) -> DataFrame:
+        return df.drop_duplicates(inplace=True)
