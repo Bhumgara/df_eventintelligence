@@ -1,4 +1,4 @@
-import requests, dotenv, os
+import requests, dotenv, os, pandas as pd
 
 # Global variables setup
 dotenv.load_dotenv()
@@ -43,3 +43,6 @@ def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
         d_filters['offset'] += data['pagecount']
 
     return collective_results
+
+def events_to_df(events:list, keys:list[str]):
+    return pd.DataFrame([{k: e.get(k, None) for k in keys} for e in events])
