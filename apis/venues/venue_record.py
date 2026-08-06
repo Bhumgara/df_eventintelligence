@@ -7,5 +7,6 @@ class VenueRecord(BaseModel):
     id: str
     city: str
     country: str
+    postalCode: str
     longitude: float
     latitude: float

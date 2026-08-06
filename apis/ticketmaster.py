@@ -19,7 +19,7 @@ def get_nested_value(path, data_dict):
     return current
 
 
-def get_ticketmaster_data(endpoint, embedded_parts, filters={}) -> pd.DataFrame:
+def get_ticketmaster_data(endpoint, embedded_parts, filters={}) -> list:
     full_url = f"{BASE_URL}{endpoint}"
     query_params={'apikey': CONSUMER_KEY, 'size': 200}
     query_params.update(filters)
