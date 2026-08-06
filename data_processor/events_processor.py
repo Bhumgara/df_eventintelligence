@@ -18,7 +18,7 @@ class EventsProcessor:
         valid_events = []
         invalid_events = []
 
-        for event in event_response["_embedded"]["events"]["_embedded"]["events"]:
+        for event in event_response:
             try:
                 print(event_response)
                 valid_events.append(EventMapper.map_event_to_record(Event(**event_response)))
