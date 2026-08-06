@@ -1,6 +1,7 @@
+from pandas import DataFrame
+
 from apis.venues.client_models.ticketmaster_venues_model import TmVenue
 from apis.venues.venue_record import VenueRecord
-from pandas import DataFrame
 
 class TmVenueMapper:
     @staticmethod
@@ -11,6 +12,7 @@ class TmVenueMapper:
             id=venue.id,
             city=venue.city.name,
             country=venue.country.name,
+            postalCode=venue.postalCode,
             longitude=venue.location.longitude,
             latitude=venue.location.latitude
         )
@@ -24,6 +26,7 @@ class TmVenueMapper:
             "id": record.id,
             "city": record.city,
             "country": record.country,
+            "postalCode": record.postalCode,
             "longitude": record.longitude,
             "latitude": record.latitude
         }

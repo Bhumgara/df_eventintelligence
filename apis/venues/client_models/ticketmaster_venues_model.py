@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class Country(BaseModel):
@@ -9,13 +11,14 @@ class City(BaseModel):
     name: str
 
 class Location(BaseModel):
-    longitude: str
-    latitude: str
+    longitude: float = Field(ge=-180, le=180)
+    latitude: float = Field(ge=-90, le=90)
 
 class TmVenue(BaseModel):
     name: str
-    type: str
+    type: Optional[str]
     id: str
+    postalCode: str
     city: City
     country: Country
     location: Location
