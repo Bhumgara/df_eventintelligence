@@ -26,7 +26,7 @@ class TmEventMapper:
             "venues": record.venues
         }
 
-    def map_event_to_record(self, event: TmEvent) -> EventRecord:
+    def map_event_to_record(event: TmEvent) -> EventRecord:
             return EventRecord(
                 name = event.name,
                 typeOfEvent = event.typeOfEvent,
@@ -35,7 +35,7 @@ class TmEventMapper:
                 locale = event.locale,
                 startDate = event.dates.start.localDate,
                 multipleDays = event.dates.spanMultipleDays,
-                venues = self.map_links_to_list(event.links)[0]
+                venues = TmEventMapper.map_links_to_list(event.links)[0]
             )
 
 
