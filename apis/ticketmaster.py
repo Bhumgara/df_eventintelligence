@@ -29,11 +29,11 @@ def get_ticketmaster_data(endpoint, embedded_parts, filters={}) -> pd.DataFrame:
     print(f"Status Code: {response.status_code}")
     print(f"URL Used: {response.url}")
 
-    flattened_data = {}
+    flattened_data = []
 
     data = response.json()
     for path in embedded_parts:
-        flattened_data[path[-1]] = get_nested_value(path, data)
+        flattened_data = get_nested_value(path, data)
 
     pages = data["page"]["totalPages"]
     page_no = data["page"]["number"] + 1
@@ -43,5 +43,5 @@ def get_ticketmaster_data(endpoint, embedded_parts, filters={}) -> pd.DataFrame:
         query_params.update(next_page)
         response = requests.get(full_url, params=query_params)
         for path in embedded_parts:
-            flattened_data[path[-1]] += get_nested_value(path, response.json())
+            flattened_data += get_nested_value(path, response.json())
     return flattened_data
