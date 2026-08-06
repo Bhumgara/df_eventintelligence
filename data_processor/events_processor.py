@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from apis.events.event_record import EventRecord
 from apis.events.events_mapper import EventMapper
-from apis.events.client_models.event_model import Event
+from apis.events.client_models.ticketmaster_event_model import Event
 
 class EventsProcessor:
 
@@ -20,10 +20,8 @@ class EventsProcessor:
 
         for event in event_response:
             try:
-                print(event_response)
                 valid_events.append(EventMapper.map_event_to_record(Event(**event_response)))
             except ValidationError as e:
-                # print(e)
                 invalid_events.append({"events": event, "error": str(e)})
 
         if len(valid_events) == 0:

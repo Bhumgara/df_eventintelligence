@@ -14,7 +14,7 @@ class Location(BaseModel):
     longitude: float = Field(ge=-180, le=180)
     latitude: float = Field(ge=-90, le=90)
 
-class Venue(BaseModel):
+class TmVenue(BaseModel):
     name: str
     type: Optional[str]
     id: str

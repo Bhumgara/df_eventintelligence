@@ -1,12 +1,11 @@
+from pandas import DataFrame
 
-from pydantic import ValidationError
-
-from apis.venues.client_models.venues_model import Venue
+from apis.venues.client_models.ticketmaster_venues_model import TmVenue
 from apis.venues.venue_record import VenueRecord
 
-class VenueMapper:
+class TmVenueMapper:
     @staticmethod
-    def map_venue_to_record(venue: Venue) -> VenueRecord:
+    def map_venue_to_record(venue: TmVenue) -> VenueRecord:
         return VenueRecord(
             name=venue.name,
             type=venue.type,
@@ -31,3 +30,15 @@ class VenueMapper:
             "longitude": record.longitude,
             "latitude": record.latitude
         }
+
+
+    @staticmethod
+    def build_venues_dataframe(venues_json: dict) -> DataFrame:
+        venues_models = [
+            TmVenueMapper.map_venue_to_record(TmVenue(**venue))
+            for venue in venues_json["_embedded"]["venues"]
+        ]
+        venues_df = DataFrame(
+            [TmVenueMapper.map_record_to_dict(vm) for vm in venues_models]
+        )
+        return venues_df
