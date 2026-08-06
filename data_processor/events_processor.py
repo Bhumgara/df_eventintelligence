@@ -1,6 +1,7 @@
 from typing import Any
 
 from pandas import DataFrame
+import pandas as pd
 from pydantic import ValidationError
 
 from apis.events.event_record import EventRecord
@@ -45,6 +46,9 @@ class EventsProcessor:
             'venues': 'venue_id',
         }, inplace=True)
 
+    def event_start_date_to_datetime(df: DataFrame) -> DataFrame:
+        df['event_start_date'] = pd.to_datetime(df['event_start_date'])
+        return df
 
     def drop_duplicates(df: DataFrame) -> DataFrame:
         return df.drop_duplicates(inplace=True)
