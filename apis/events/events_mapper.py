@@ -23,7 +23,9 @@ class TmEventMapper:
             "locale": record.locale,
             "startDate": record.startDate,
             "multipleDays": record.multipleDays,
-            "venues": record.venues
+            "venues": record.venues,
+            "genre_name": record.genre_name,
+            "subgenre_name": record.subgenre_name
         }
 
     def map_event_to_record(event: TmEvent) -> EventRecord:
@@ -35,7 +37,10 @@ class TmEventMapper:
                 locale = event.locale,
                 startDate = event.dates.start.localDate,
                 multipleDays = event.dates.spanMultipleDays,
-                venues = TmEventMapper.map_links_to_list(event.links)[0]
+                venues = TmEventMapper.map_links_to_list(event.links)[0],
+                # Only map the first classification for simplicity, more may be present
+                genre_name=event.classifications[0].genre.name,
+                subgenre_name=event.classifications[0].subGenre.name
             )
 
 

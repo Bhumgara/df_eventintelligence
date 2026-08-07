@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 class EventRecord(BaseModel):
@@ -9,3 +11,5 @@ class EventRecord(BaseModel):
     startDate: str
     multipleDays: bool
     venues: list[str]
+    genre_name: Optional[str]
+    subgenre_name: Optional[str]
