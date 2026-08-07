@@ -9,6 +9,8 @@ from apis.venues.venues_mapper import TmVenueMapper
 
 
 class VenuesProcessor:
+    def __init__(self):
+        pass
        
     @staticmethod
     def build_venues_dataframe(venues: list[VenueRecord]) -> DataFrame:
@@ -34,4 +36,20 @@ class VenuesProcessor:
             raise Exception('No venues match schema.')
 
         return valid_venues, invalid_venues
-        
+
+    @staticmethod
+    def clean_venues(df: DataFrame) -> DataFrame:
+        df.rename(columns={
+            'id': 'venue_id',
+            'name': 'venue_name',
+            'type': 'venue_type',
+            'city': 'venue_city',
+            'country': 'venue_country',
+            'postalCode': 'venue_postal_code',
+            'longitude': 'venue_longitude',
+            'latitude': 'venue_latitude',
+        }, inplace=True)
+
+        df.drop_duplicates(inplace=True)
+
+        return df
