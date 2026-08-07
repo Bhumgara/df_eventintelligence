@@ -9,6 +9,8 @@ from apis.venues.venues_mapper import TmVenueMapper
 
 
 class VenuesProcessor:
+    def __init__(self):
+        pass
        
     @staticmethod
     def build_venues_dataframe(venues: list[VenueRecord]) -> DataFrame:
@@ -35,8 +37,9 @@ class VenuesProcessor:
 
         return valid_venues, invalid_venues
 
-    def rename_venues_columns(df):
-        return df.rename(columns={
+    @staticmethod
+    def clean_venues(df: DataFrame) -> DataFrame:
+        df.rename(columns={
             'id': 'venue_id',
             'name': 'venue_name',
             'type': 'venue_type',
@@ -47,6 +50,6 @@ class VenuesProcessor:
             'latitude': 'venue_latitude',
         }, inplace=True)
 
+        df.drop_duplicates(inplace=True)
 
-    def drop_duplicate(df: DataFrame) -> DataFrame:
-        return df.drop_duplicates(inplace=True)
+        return df

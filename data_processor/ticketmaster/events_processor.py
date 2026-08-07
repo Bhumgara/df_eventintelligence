@@ -9,6 +9,8 @@ from apis.events.events_mapper import TmEventMapper
 from apis.events.client_models.ticketmaster_event_model import TmEvent
 
 class EventsProcessor:
+    def __init__(self):
+        pass
 
     def build_events_dataframe(events: list[EventRecord]) -> DataFrame:
         return DataFrame(
@@ -30,12 +32,9 @@ class EventsProcessor:
     
         return valid_events, invalid_events
 
-    def extract_venue_id(events_df: DataFrame) -> DataFrame:
-        events_df['venue_id'] = events_df['venue_id'].apply(lambda row: [venue.split('/')[-1].split('?')[0] for venue in row][0])
-        return events_df
-
-    def rename_events_columns(df: DataFrame) -> DataFrame:
-        return df.rename(columns={
+    @staticmethod
+    def clean_events(df: DataFrame) -> DataFrame:
+        df.rename(columns={
             'id': 'event_id',
             'name': 'event_name',
             'typeOfEvent': 'event_type',
@@ -46,9 +45,13 @@ class EventsProcessor:
             'venues': 'venue_id',
         }, inplace=True)
 
-    def event_start_date_to_datetime(df: DataFrame) -> DataFrame:
         df['event_start_date'] = pd.to_datetime(df['event_start_date'])
-        return df
+        df['venue_id'] = df['venue_id'].apply(lambda row: [venue.split('/')[-1].split('?')[0] for venue in row][0])
 
-    def drop_duplicates(df: DataFrame) -> DataFrame:
-        return df.drop_duplicates(inplace=True)
+        df.drop_duplicates(inplace=True)
+
+        # Drop events with the same event_name, venue_id, and event_year
+        # Some events have multiple records for every day of the event
+        df['event_year'] = df['event_start_date'].dt.year
+        df = df.drop_duplicates(subset=['venue_id', 'event_name', 'event_year'], keep='first')
+        return df
