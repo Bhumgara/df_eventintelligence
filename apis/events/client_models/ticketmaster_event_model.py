@@ -20,6 +20,16 @@ class Dates(BaseModel):
     timezone: str
     spanMultipleDays: bool
 
+class Genre(BaseModel):
+    name: Optional[str]
+
+class SubGenre(BaseModel):
+    name: Optional[str]
+
+class Classification(BaseModel):
+    genre: Genre
+    subGenre: SubGenre
+
 class TmEvent(BaseModel):
     name: str
     typeOfEvent: str  = Field(default=None, alias="type")
@@ -28,3 +38,4 @@ class TmEvent(BaseModel):
     locale: str
     dates: Dates
     links: Optional[TmEventLinks]  = Field(default=None, alias="_links")
+    classifications: list[Classification]
