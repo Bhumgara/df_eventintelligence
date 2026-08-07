@@ -1,9 +1,9 @@
 import requests, dotenv, os, pandas as pd
 from pydantic import ValidationError
 
-import events.events_mapper as EMapper
-import events.event_record as ERecord
-import events.client_models.skiddle_event_model as skem
+from .events import events_mapper as EMapper
+from .events import event_record as ERecord
+from .events.client_models import skiddle_event_model as skem
 
 # Global variables setup
 dotenv.load_dotenv()
@@ -13,21 +13,30 @@ API_KEY = os.getenv("SKIDDLE_KEY")
 
 
 
-def query(endpoint:str, filters:dict={}, verbose:bool=False) -> dict:
+def query(endpoint:str, filters:dict={}, max_attempts:int=3, accepted_codes:list[int]=[200], verbose:bool=False) -> dict:
     url = BASE_URL + endpoint
     params = {'api_key': API_KEY}
     params.update(filters)
 
+    attempts = 0
+    status_code = 0
+
     if verbose:
         print(f"{url}\n\t{'\n\t'.join(f"{k}: {v}" for k,v in filters.items())}")
 
-    response = requests.get(url, params)
+    while attempts < max_attempts and status_code not in accepted_codes:
+        response = requests.get(url, params)
+        if response.status_code != 200:
+            if verbose:
+                print(f"Unexpected response code ({response.status_code}): {response.reason}")
+        status_code = response.status_code
 
-    assert response.status_code == 200, f"Unexpected response code ({response.status_code}): {response.reason}"
-
-    data = response.json()
-
-    return data
+    if attempts >= max_attempts:
+        print(f"Failed to fetch events {filters['offset']}-{filters['offset']+filters['limit']}, after trying {attempts} times.")
+        return {}
+    else:
+        data = response.json()
+        return data
 
 
 
@@ -37,15 +46,15 @@ def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
     d_filters.update(filters)
 
     collective_results = []
+    data = {}
 
-    while d_filters['offset'] < 1000:
+    while d_filters['offset'] < data.get('totalcount', 1000):
         data = query(endpoint, d_filters, verbose=verbose)
-        collective_results += data['results']
 
-        if int(data['totalcount']) <= len(collective_results):
-            break
+        if 'results' in data.keys():
+            collective_results += data['results']
 
-        d_filters['offset'] += data['pagecount']
+        d_filters['offset'] += d_filters['limit']
 
     return collective_results
 
