@@ -1,5 +1,5 @@
 from apis.events.client_models.ticketmaster_event_model import TmEvent, TmEventLinks
-from apis.events.event_record import EventRecord
+from apis.events.event_record import TmEventRecord, SkEventRecord
 from typing import Optional
 
 class TmEventMapper:
@@ -14,7 +14,7 @@ class TmEventMapper:
         return (newVenueLinks, newAttractionLinks)
 
     @staticmethod
-    def map_event_record_to_dict(record: EventRecord) -> dict:
+    def map_event_record_to_dict(record: TmEventRecord) -> dict:
         return {
             "name": record.name,
             "typeOfEvent": record.typeOfEvent,
@@ -28,8 +28,8 @@ class TmEventMapper:
             "subgenre_name": record.subgenre_name
         }
 
-    def map_event_to_record(event: TmEvent) -> EventRecord:
-            return EventRecord(
+    def map_event_to_record(event: TmEvent) -> TmEventRecord:
+            return TmEventRecord(
                 name = event.name,
                 typeOfEvent = event.typeOfEvent,
                 id = event.id,
@@ -48,14 +48,30 @@ from apis.events.client_models.skiddle_event_model import Event as SkEvent
 
 class SkEventMapper:
     @staticmethod
-    def map_event_to_record(event: SkEvent) -> EventRecord:
-        return EventRecord(
-             name = event.eventname,
-             typeOfEvent = event.eventcode,
-             id = str(event.id),
-             url = event.link,
-             locale = '',
-             startDate = event.startdate,
-             multipleDays = event.startdate.split('T')[0] != event.enddate.split('T')[0],
-             venues = [str(event.venue.id)]
+    def map_event_record_to_dict(record: SkEventRecord) -> dict:
+        # return {
+        #     "id": record.id,
+        #     "name": record.name,
+        #     "eventcode": record.eventcode,
+        #     "startDate": record.startdate,
+        #     "enddate": record.enddate,
+        #     "venue_id": record.venue_id,
+        # }
+        return record.model_dump()
+    
+    @staticmethod
+    def map_event_to_record(event: SkEvent) -> SkEventRecord:
+        return SkEventRecord(
+            id = event.id,
+            name = event.eventname,
+            eventcode = event.eventcode,
+            startdate = event.startdate,
+            enddate = event.enddate,
+            venue_id = event.venue.id,
+            venue_name = event.venue.name,
+            town = event.venue.town,
+            region = event.venue.region,
+            postcode = event.venue.postcode,
+            longitude = event.venue.longitude,
+            latitude = event.venue.latitude,
         )

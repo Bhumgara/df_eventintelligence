@@ -1,9 +1,13 @@
 import requests, dotenv, os, pandas as pd
 from pydantic import ValidationError
 
-from .events import events_mapper as EMapper
-from .events import event_record as ERecord
+from .events.events_mapper import SkEventMapper
+from .events.event_record import SkEventRecord
 from .events.client_models import skiddle_event_model as skem
+
+from .venues.venues_mapper import SkVenueMapper
+from .venues.venue_record import SkVenueRecord
+from .venues.client_models import skiddle_venues_model as skvm
 
 # Global variables setup
 dotenv.load_dotenv()
@@ -26,6 +30,7 @@ def query(endpoint:str, filters:dict={}, max_attempts:int=3, accepted_codes:list
 
     while attempts < max_attempts and status_code not in accepted_codes:
         response = requests.get(url, params)
+        attempts += 1
         if response.status_code != 200:
             if verbose:
                 print(f"Unexpected response code ({response.status_code}): {response.reason}")
@@ -40,15 +45,15 @@ def query(endpoint:str, filters:dict={}, max_attempts:int=3, accepted_codes:list
 
 
 
-def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
-    endpoint = 'events/search/'
+def query_all(endpoint:str, filters:dict={}, verbose:bool=False) -> list[dict]:
+    # endpoint = 'events/search/'
     d_filters = {'limit': 100, 'offset':0}
     d_filters.update(filters)
 
     collective_results = []
     data = {}
 
-    while d_filters['offset'] < data.get('totalcount', 1000):
+    while d_filters['offset'] < int(data.get('totalcount', 1000)):
         data = query(endpoint, d_filters, verbose=verbose)
 
         if 'results' in data.keys():
@@ -58,7 +63,9 @@ def fetch_all_events(filters:dict={}, verbose:bool=False) -> list[dict]:
 
     return collective_results
 
-def validate_events(events:list[dict], return_invalid:bool=False) -> list[ERecord.EventRecord]:
+
+
+def validate_events(events:list[dict], return_invalid:bool=False) -> list[SkEventRecord]:
     # Validate each event has been fetched in the expected format
     event_models = []
     invalid_events = []
@@ -70,14 +77,40 @@ def validate_events(events:list[dict], return_invalid:bool=False) -> list[ERecor
             invalid_events.append(e)
 
     # Map validated events to a consistent record format
-    event_records = [EMapper.SkEventMapper.map_event_to_record(e) for e in event_models]
+    event_records = [SkEventMapper.map_event_to_record(e) for e in event_models]
 
     # Return invalid events if requested
     if return_invalid: return event_records, invalid_events
     else: return event_records
 
-def events_to_df(events:list[dict]|list[ERecord.EventRecord], keys:list[str]=None):
+def events_to_df(events:list[dict]|list[SkEventRecord]):
     # Convert EventRecords to dict if not already done so
     if type(events) != dict:
-        events = [EMapper.TmEventMapper.map_event_record_to_dict(e) for e in events]
+        events = [SkEventMapper.map_event_record_to_dict(e) for e in events]
     return pd.DataFrame(events)
+
+
+
+def validate_venues(venues:list[dict], return_invalid:bool=False) -> list[SkVenueRecord]:
+    # Validate each venue has been fetched in the expected format
+    venue_models = []
+    invalid_venues = []
+    for v in venues:
+        try:
+            venue_models.append(skvm.SkVenue(**v))
+        except ValidationError as v:
+            print(v)
+            invalid_venues.append(v)
+
+    # Map validated venues to a consistent record format
+    venue_records = [SkVenueMapper.map_venue_to_record(v) for v in venue_models]
+
+    # Return invalid venues if requested
+    if return_invalid: return venue_records, invalid_venues
+    else: return venue_records
+
+def venues_to_df(venues:list[dict]|list[SkVenueRecord]):
+    # Convert VenueRecords to dict if not already done so
+    if type(venues) != dict:
+        venues = [SkVenueMapper.map_venue_record_to_dict(e) for e in venues]
+    return pd.DataFrame(venues)
