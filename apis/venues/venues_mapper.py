@@ -1,17 +1,18 @@
-
-from apis.venues.client_models.venues_model import Venue
-from apis.venues.venue_record import VenueRecord
 from pandas import DataFrame
 
-class VenueMapper:
+from apis.venues.client_models.ticketmaster_venues_model import TmVenue
+from apis.venues.venue_record import VenueRecord
+
+class TmVenueMapper:
     @staticmethod
-    def map_venue_to_record(venue: Venue) -> VenueRecord:
+    def map_venue_to_record(venue: TmVenue) -> VenueRecord:
         return VenueRecord(
             name=venue.name,
             type=venue.type,
             id=venue.id,
             city=venue.city.name,
             country=venue.country.name,
+            postalCode=venue.postalCode,
             longitude=venue.location.longitude,
             latitude=venue.location.latitude
         )
@@ -25,6 +26,7 @@ class VenueMapper:
             "id": record.id,
             "city": record.city,
             "country": record.country,
+            "postalCode": record.postalCode,
             "longitude": record.longitude,
             "latitude": record.latitude
         }
@@ -33,10 +35,10 @@ class VenueMapper:
     @staticmethod
     def build_venues_dataframe(venues_json: dict) -> DataFrame:
         venues_models = [
-            VenueMapper.map_venue_to_record(Venue(**venue))
+            TmVenueMapper.map_venue_to_record(TmVenue(**venue))
             for venue in venues_json["_embedded"]["venues"]
         ]
         venues_df = DataFrame(
-            [VenueMapper.map_record_to_dict(vm) for vm in venues_models]
+            [TmVenueMapper.map_record_to_dict(vm) for vm in venues_models]
         )
         return venues_df
