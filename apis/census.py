@@ -1,16 +1,14 @@
+import dotenv, os
 import pgeocode
 import pandas as pd
 import plotly.express as px
 
-SOURCE = '.\\.data\\pcds_p003.csv'
-
-df_sectors = None
-df_districts = None
+dotenv.load_dotenv()
+DATA_SOURCE = os.getenv('SOURCE_CENSUS_DATA')
 
 def load_sector_data() -> pd.DataFrame:
-    global df_sectors
 
-    df_sectors = pd.read_csv(SOURCE).rename(
+    df_sectors = pd.read_csv(DATA_SOURCE).rename(
         columns={
             'Postcode Sectors':'sector',
             'Count':'count'
@@ -20,15 +18,12 @@ def load_sector_data() -> pd.DataFrame:
 
     return df_sectors
 
-def load_district_data() -> pd.DataFrame:
-    assert type(df_sectors) == pd.DataFrame, f"Source sector data has not been loaded in. Please run `load_sector_data()` first."
+def load_district_data(sectors:dict|pd.DataFrame) -> pd.DataFrame:
+    districts = sectors['district'].unique()
 
-    global df_districts
-
-    districts = df_sectors['district'].unique()
     d2c = get_longlat_for_districts(districts)
 
-    df_sectors_ext = pd.merge(df_sectors, d2c, how='left', left_on='district', right_on='postal_code')
+    df_sectors_ext = pd.merge(sectors, d2c, how='left', left_on='district', right_on='postal_code')
 
     df_districts = (df_sectors_ext
         .groupby(by=['district','longitude','latitude'], as_index=False)[['count']]
@@ -42,17 +37,15 @@ def get_longlat_for_districts(districts:str|list[str]) -> pd.Series | pd.DataFra
     nomi = pgeocode.Nominatim('gb')
     return nomi.query_postal_code(districts)
 
-def mapplot_districts():
-    assert type(df_districts) == pd.DataFrame, f"District data has not been computed yet. Please run `load_district_data()` first."
+def mapplot_districts(districts:pd.DataFrame):
 
-    # df must contain: district, population, lat, lon
     fig = px.scatter_mapbox(
-        df_districts,
+        districts,
         lat="latitude",
         lon="longitude",
         hover_name="district",
         hover_data={"population": True},
-        size="population",          # bubble size = population
+        size="population",
         size_max=12,
         color="population",
         color_continuous_scale="Viridis",
