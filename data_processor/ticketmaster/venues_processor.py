@@ -8,18 +8,12 @@ from apis.venues.venue_record import TmVenueRecord
 from apis.venues.venues_mapper import TmVenueMapper
 
 
-# class VenuesProcessor:
-#     def __init__(self):
-#         pass
-       
-@staticmethod
 def build_venues_dataframe(venues: list[TmVenueRecord]) -> DataFrame:
     venues_df = DataFrame(
         [TmVenueMapper.map_record_to_dict(vm) for vm in venues]
     )
     return venues_df
 
-@staticmethod
 def validate_venues(venues_response):
     valid_venues = []
     invalid_venues = []
@@ -33,7 +27,6 @@ def validate_venues(venues_response):
         raise Exception('No venues match schema.')
     return valid_venues, invalid_venues
 
-@staticmethod
 def clean_venues(df: DataFrame) -> DataFrame:
     df.rename(columns={
         'id': 'venue_id',

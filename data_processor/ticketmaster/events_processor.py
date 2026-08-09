@@ -8,10 +8,6 @@ from apis.events.event_record import TmEventRecord
 from apis.events.events_mapper import TmEventMapper
 from apis.events.client_models.ticketmaster_event_model import TmEvent
 
-# class EventsProcessor:
-#     def __init__(self):
-#         pass
-
 def build_events_dataframe(events: list[TmEventRecord]) -> DataFrame:
     return DataFrame(
             [TmEventMapper.map_event_record_to_dict(ev) for ev in events]
@@ -31,7 +27,6 @@ def validate_events(event_response) -> tuple[list[TmEventRecord], list[dict[Any,
 
     return valid_events, invalid_events
 
-@staticmethod
 def clean_events(df: DataFrame) -> DataFrame:
     df.rename(columns={
         'id': 'event_id',

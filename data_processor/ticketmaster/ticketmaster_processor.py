@@ -9,42 +9,26 @@ import pandas as pd
 import data_processor.ticketmaster.events_processor as ep
 import data_processor.ticketmaster.venues_processor as vp
 
-
-
-# class TicketmasterProcessor:
-#     def __init__(
-#             self,
-#             events_df,
-#             venues_df,
-#             events_processor: EventsProcessor, 
-#             venues_processor: VenuesProcessor
-#             ):
-#         self.events_df = events_df
-#         self.venues_df = venues_df
-#         self.events_processor = events_processor
-#         self.venues_processor = venues_processor
-
 def add_county(df):
     nomi = pg.Nominatim("gb")
     df['venue_county'] = nomi.query_postal_code(df["venue_postal_code"].to_list())["county_name"]
     return df
 
-def add_regions(df) -> pd.DataFrame:
-    csv_path = Path(__file__).resolve().parents[2] / "assets" / "ons_geographical_regions.csv"
-    df_ons_regions = pd.read_csv(csv_path)
-    df = df.merge(
-        df_ons_regions,
-        how="left",
-        left_on="venue_city",
-        right_on="LAD24NM"
-    )
-    df.rename(columns={"RGN24NM":"venue_region"}, inplace=True)
-    return df
+# def add_regions(df) -> pd.DataFrame:
+#     csv_path = Path(__file__).resolve().parents[2] / "assets" / "ons_geographical_regions.csv"
+#     df_ons_regions = pd.read_csv(csv_path)
+#     df = df.merge(
+#         df_ons_regions,
+#         how="left",
+#         left_on="venue_city",
+#         right_on="LAD24NM"
+#     )
+#     df.rename(columns={"RGN24NM":"venue_region"}, inplace=True)
+#     return df
 
 def merge_venues_to_events(events_df, venues_df):
     events_df = ep.clean_events(events_df)
     venues_df = vp.clean_venues(venues_df)
     merged_df = events_df.merge(venues_df, how="left", on="venue_id")
     tckm_df = add_county(merged_df)
-    tckm_df = add_regions(tckm_df)
     return tckm_df
