@@ -4,7 +4,7 @@ from pandas import DataFrame
 import pandas as pd
 from pydantic import ValidationError
 
-from apis.events.event_record import EventRecord
+from apis.events.event_record import TmEventRecord
 from apis.events.events_mapper import TmEventMapper
 from apis.events.client_models.ticketmaster_event_model import TmEvent
 
@@ -12,12 +12,12 @@ class EventsProcessor:
     def __init__(self):
         pass
 
-    def build_events_dataframe(events: list[EventRecord]) -> DataFrame:
+    def build_events_dataframe(events: list[TmEventRecord]) -> DataFrame:
         return DataFrame(
                 [TmEventMapper.map_event_record_to_dict(ev) for ev in events]
             )
 
-    def validate_events(event_response) -> tuple[list[EventRecord], list[dict[Any, str]]]:
+    def validate_events(event_response) -> tuple[list[TmEventRecord], list[dict[Any, str]]]:
         valid_events = []
         invalid_events = []
 

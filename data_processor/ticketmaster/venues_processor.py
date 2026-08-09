@@ -4,7 +4,7 @@ from pandas import DataFrame
 from pydantic import ValidationError
 
 from apis.venues.client_models.ticketmaster_venues_model import TmVenue
-from apis.venues.venue_record import VenueRecord
+from apis.venues.venue_record import TmVenueRecord
 from apis.venues.venues_mapper import TmVenueMapper
 
 
@@ -13,7 +13,7 @@ class VenuesProcessor:
         pass
        
     @staticmethod
-    def build_venues_dataframe(venues: list[VenueRecord]) -> DataFrame:
+    def build_venues_dataframe(venues: list[TmVenueRecord]) -> DataFrame:
         venues_df = DataFrame(
             [TmVenueMapper.map_record_to_dict(vm) for vm in venues]
         )
