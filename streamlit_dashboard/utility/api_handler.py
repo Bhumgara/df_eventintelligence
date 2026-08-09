@@ -10,6 +10,7 @@ from data_processor.ticketmaster.ticketmaster_processor import TicketmasterProce
 from data_processor.ticketmaster.events_processor import EventsProcessor
 import json
 import os
+from pandas import DataFrame
 
 TICKETMASTER_EVENTS_DATA = "tck_events.json"
 TICKETMASTER_VENUES_DATA = "tck_veneus.json"
@@ -26,7 +27,7 @@ def write_api_to_json(filename: str, response):
     with open(f"{API_DATA_FOLDER}/{filename}", "w") as file:
         json.dump(response, file, indent=4)
 
-def call_ticketmaster_api():
+def call_ticketmaster_api() -> None:
     endpoint = "/venues.json"
     embedded_parts = [("_embedded", "venues")]
     kword_filters_gb= {"countryCode":"GB"}
@@ -52,7 +53,7 @@ def call_ticketmaster_api():
     print("Local Ticketmaster API successfully updated.")
 
 
-def read_ticketmaster_data():
+def read_ticketmaster_data() -> DataFrame:
 
     try:
         events_list = read_local_api_data(TICKETMASTER_EVENTS_DATA)
@@ -86,6 +87,6 @@ def read_ticketmaster_data():
 
     return(merged_df)
 
-def update_session_data():
+def update_session_data() -> DataFrame:
     call_ticketmaster_api()
     return read_ticketmaster_data()
