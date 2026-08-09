@@ -5,9 +5,9 @@ sys.path.insert(0, str(Path.cwd().parent))
 print(Path.cwd().parent)
 
 from apis import ticketmaster as tck
-from data_processor.ticketmaster.venues_processor import VenuesProcessor
-from data_processor.ticketmaster.ticketmaster_processor import TicketmasterProcessor
-from data_processor.ticketmaster.events_processor import EventsProcessor
+import data_processor.ticketmaster.events_processor as EventsProcessor
+import data_processor.ticketmaster.venues_processor as VenuesProcessor
+import data_processor.ticketmaster.ticketmaster_processor as TicketmasterProcessor
 import json
 import os
 from pandas import DataFrame
@@ -78,12 +78,7 @@ def read_ticketmaster_data() -> DataFrame:
     vn_copy = venues_df.copy()
     ev_copy = events_df.copy()
 
-    evp = EventsProcessor()
-    vnp = VenuesProcessor()
-
-
-    tmp = TicketmasterProcessor(ev_copy, vn_copy, evp, vnp)
-    merged_df = tmp.merge_venues_to_events()
+    merged_df = TicketmasterProcessor.merge_venues_to_events(ev_copy, vn_copy)
 
     return(merged_df)
 

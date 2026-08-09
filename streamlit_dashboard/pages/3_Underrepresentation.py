@@ -6,12 +6,6 @@ from utility import api_handler as api
 from plotly.graph_objs._figure import Figure
 
 
-
-def add_county(df):
-    nomi = pg.Nominatim("gb")
-    df['venue_county'] = nomi.query_postal_code(df["venue_postal_code"].to_list())["county_name"]
-    return df
-
 def build_treemap_df(df):
     df_genre_counts = df.groupby(["genre_name", "subgenre_name"]).size().reset_index(name="count")
     return df_genre_counts
@@ -85,9 +79,7 @@ def create_genre_kpi(df) -> None:
         )
 
 def create_genre_county_heatmap(df) -> Figure:
-    df_genre_loc = df[["venue_postal_code", "genre_name"]].copy()
-    df_genre_loc = add_county(df_genre_loc)
-    heatmap_data = df_genre_loc.groupby(['genre_name', 'venue_county']).size().reset_index(name='count')
+    heatmap_data = df.groupby(['genre_name', 'venue_county']).size().reset_index(name='count')
     
     pivot = heatmap_data.pivot(index='genre_name', columns='venue_county', values='count').fillna(0)
 
@@ -113,6 +105,36 @@ def create_genre_county_heatmap(df) -> Figure:
     )
 
     return fig
+
+# def create_genre_region_heatmap(df) -> Figure:
+#     df_genre_loc = df[[ "genre_name", "venue_region"]].copy()
+#     # df_genre_loc = add_county(df_genre_loc)
+#     heatmap_data = df_genre_loc.groupby(['genre_name', 'venue_region']).size().reset_index(name='count')
+    
+#     pivot = heatmap_data.pivot(index='genre_name', columns='venue_region', values='count').fillna(0)
+
+#     fig = px.imshow(
+#         pivot,
+#         labels=dict(x="Region", y="Genre", color="Frequency"),
+#         x=pivot.columns,
+#         y=pivot.index,
+#         color_continuous_scale="Plasma",
+#         aspect="auto",
+#     )
+
+#     fig.update_layout(
+#         xaxis=dict(tickangle=-45, tickfont=dict(size=12)),
+#         yaxis=dict(tickfont=dict(size=12)),
+#     )
+
+#     fig.update_coloraxes(
+#         colorbar=dict(
+#             title="Event Count",
+#             tickfont=dict(size=12),
+#         )
+#     )
+
+#     return fig
 
 
 def main():
