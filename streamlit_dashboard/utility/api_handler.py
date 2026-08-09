@@ -79,3 +79,7 @@ def read_ticketmaster_data():
     merged_df = tmp.merge_venues_to_events()
 
     return(merged_df)
+
+def update_session_data():
+    call_ticketmaster_api()
+    return read_ticketmaster_data()

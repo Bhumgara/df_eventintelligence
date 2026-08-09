@@ -10,4 +10,4 @@ with left:
     st.header("Gaps in the UK live music calendar")
 
 with right:
-    st.button("Refresh", on_click=st.session_state.update({'data': ah.call_ticketmaster_api()}))
+    st.button("Refresh", on_click=st.session_state.update({'data': ah.update_session_data()}))
