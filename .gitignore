@@ -183,3 +183,7 @@ cython_debug/
 
 # Vscode
 .vscode
+
+# Local Data
+streamlit_dashboard/.api_data
+.api_data
