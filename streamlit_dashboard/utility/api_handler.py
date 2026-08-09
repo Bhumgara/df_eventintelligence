@@ -1,3 +1,9 @@
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd().parent))
+print(Path.cwd().parent)
+
 from apis import ticketmaster as tck
 from data_processor.ticketmaster.venues_processor import VenuesProcessor
 from data_processor.ticketmaster.ticketmaster_processor import TicketmasterProcessor
