@@ -19,7 +19,7 @@ def init_data():
     st.session_state.setdefault('data', pd.DataFrame())
 @st.fragment(None)
 def update_data():
-    st.session_state.update({'data': ah.update_session_data()})
+    st.session_state.update({'data': ah.update_ticketmaster_data()})
 
 init_data()
 
