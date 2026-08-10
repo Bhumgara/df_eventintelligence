@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 dotenv.load_dotenv()
-DATA_SOURCE = os.getenv('SOURCE_CENSUS_DATA')
+DATA_SOURCE = '../'+os.getenv('SOURCE_CENSUS_DATA')
 
 def load_sector_data() -> pd.DataFrame:
 
@@ -15,6 +15,7 @@ def load_sector_data() -> pd.DataFrame:
         }
     )
     df_sectors['district'] = df_sectors['sector'].str.split().str[0]
+    df_sectors['area'] = [sect[:[x.isdigit() for x in sect].index(True)] for sect in df_sectors['sector']]
 
     return df_sectors
 
@@ -26,7 +27,7 @@ def load_district_data(sectors:dict|pd.DataFrame) -> pd.DataFrame:
     df_sectors_ext = pd.merge(sectors, d2c, how='left', left_on='district', right_on='postal_code')
 
     df_districts = (df_sectors_ext
-        .groupby(by=['district','longitude','latitude'], as_index=False)[['count']]
+        .groupby(by=['district','county_name','longitude','latitude'], as_index=False)[['count']]
         .sum()
         .rename(columns={'count':'population'})
     )
