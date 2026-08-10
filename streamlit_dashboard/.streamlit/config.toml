@@ -1,0 +1,13 @@
+[theme]
+primaryColor = "#1A3A8F"
+
+backgroundColor = "#F4F4F6"
+
+
+secondaryBackgroundColor = "#C8B8F0"
+
+# Color for all text
+textColor = "#0D1F5C"
+
+# Font family: "sans serif", "serif", or "monospace"
+font = "sans serif"
