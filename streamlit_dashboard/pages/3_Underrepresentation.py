@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 from utility import api_handler as api
 from plotly.graph_objs._figure import Figure
+from streamlit_dashboard.Home import update_data
 
 
 def build_treemap_df(df):
@@ -141,7 +142,16 @@ def main():
     df = api.read_ticketmaster_data()
     df = df[df["genre_name"] != "Undefined"]
 
-    st.write("# UK Festival Genre Representation")
+    logo, left, right = st.columns([3,5,2])
+    with logo:
+        st.image("eventintelligence-logo.png", width=300)
+
+    with left:
+        st.write("# UK Festival Genre Representation")
+
+    with right:
+        st.button("Refresh", on_click=update_data(), key="GenreRefreshBt")
+
     st.write("Are there genre combinations or audience segments that appear underrepresented in the current festival landscape?")
     # ----- KPIs ------
     create_genre_kpi(df)
