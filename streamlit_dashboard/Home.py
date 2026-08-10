@@ -25,12 +25,16 @@ def update_data():
 def main():
     init_data()
 
-    left, right = st.columns([7,2])
+    # ----- Page title & headers -----
+    logo, left, right = st.columns([2,5,2])
+    with logo:
+        st.image("eventintelligence-logo.png", width=300)
+
     with left:
-        st.header("Gaps in the UK live music calendar")
+        st.write("# Gaps in the UK live music calendar")
 
     with right:
-        st.button("Refresh", on_click=update_data, key="HomeRefreshBtn")
+        st.button("Refresh", on_click=update_data, key="GenreRefreshBt")
 
 
     st.write("---")
@@ -41,6 +45,8 @@ def main():
         "- A quiet weekend on Ticketmaster may still host events ticketed through other platforms (Skiddle, Eventbrite, direct box office). Low count is a signal, not proof of absence. ",
         "\n",
         "- The festival-keyword filter catches common naming patterns but will miss festivals with non-obvious names. Check gap candidates against known festival directories before concluding.",
+        "\n",
+        "- A lot of events have no genres associated"
     )
 
 if __name__ == "__main__":

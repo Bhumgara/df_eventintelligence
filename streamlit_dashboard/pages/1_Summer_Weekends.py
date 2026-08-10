@@ -27,17 +27,18 @@ FULLNESS_COLORS = {
 def streamlit_header(df):
     st.session_state.setdefault('data', pd.DataFrame())
 
-    logo, left, right = st.columns([3,5,2])
+    logo, left, right = st.columns([2,5,2])
     with logo:
         st.image("eventintelligence-logo.png", width=300)
 
     with left:
-        st.header("📅 Summer Weekend Fullness")
+        st.write("# Summer Weekend Fullness")
 
     with right:
         st.button("Refresh", on_click=update_data, key="SummerRefreshBtn")
 
     st.write("*Which weekends in the summer window are already heavily loaded with competing events, and which are relatively clear?*")
+    st.write('---')
 
     df = add_analysis_columns(df)
     years = sorted(df["event_year"].dropna().unique().tolist())

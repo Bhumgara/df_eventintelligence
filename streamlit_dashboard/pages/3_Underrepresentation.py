@@ -142,7 +142,7 @@ def main():
     df = api.read_ticketmaster_data()
     df = df[df["genre_name"] != "Undefined"]
 
-    logo, left, right = st.columns([3,5,2])
+    logo, left, right = st.columns([2,5,2])
     with logo:
         st.image("eventintelligence-logo.png", width=300)
 
@@ -153,6 +153,8 @@ def main():
         st.button("Refresh", on_click=update_data, key="GenreRefreshBt")
 
     st.write("*Are there genre combinations or audience segments that appear underrepresented in the current festival landscape?*")
+    st.write('---')
+    
     # ----- KPIs ------
     create_genre_kpi(df)
 

@@ -110,7 +110,7 @@ def main():
     st.set_page_config(layout='wide')
 
     # ----- Page title & headers -----
-    logo, left, right = st.columns([3,5,2])
+    logo, left, right = st.columns([2,5,2])
     with logo:
         st.image("eventintelligence-logo.png", width=300)
 
@@ -121,6 +121,7 @@ def main():
         st.button("Refresh", on_click=update_data, key="GenreRefreshBt")
 
     st.write('*Are there UK regions where live music event density is low relative to their size or population?*')
+    st.write('---')
 
     # ----- Population by district stats ----- 
     col1, col2 = st.columns(2)
@@ -143,11 +144,13 @@ def main():
                 st.metric(
                     label=f'#{i+1} Highest Populated County',
                     value=county[0].replace('Greater', ''),
-                    delta=f"{county[1]:,} population"
+                    delta=f"{county[1]:,} population",
+                    delta_arrow='off'
                 )
 
         # Plot map
         plot_district_populations(df_districts)
+        st.write(f":grey[Data from the ONS Census-2021 dataset.]")
 
     #  ----- Festival density by county ----- 
     with col2:
@@ -160,9 +163,10 @@ def main():
         for i, (county,col) in enumerate(counties):
             with col:
                 st.metric(
-                    label=f'#{i+1} Highest Fest. Density County',
+                    label=f'#{i+1} Highest Fest. Density',
                     value=county[1],
-                    delta=f"{county[2]} festivals"
+                    delta=f"{county[2]} festivals",
+                    delta_arrow='off'
                 )
 
         # Plot map
