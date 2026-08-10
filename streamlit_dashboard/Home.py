@@ -25,7 +25,7 @@ def update_data():
 def main():
     init_data()
 
-    left, right = st.columns([7,1])
+    left, right = st.columns([7,2])
     with left:
         st.header("Gaps in the UK live music calendar")
 

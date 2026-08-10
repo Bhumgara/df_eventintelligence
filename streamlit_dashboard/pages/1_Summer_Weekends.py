@@ -27,12 +27,12 @@ FULLNESS_COLORS = {
 def streamlit_header(df):
     st.session_state.setdefault('data', pd.DataFrame())
 
-    logo, left, right = st.columns([3,5,1])
+    logo, left, right = st.columns([3,5,2])
     with logo:
         st.image("eventintelligence-logo.png", width=300)
 
     with left:
-        st.header("Gaps in the UK live music calendar")
+        st.header("📅 Summer Weekend Fullness")
 
     with right:
         st.button("Refresh", on_click=update_data(), key="SummerRefreshBtn")
@@ -115,9 +115,7 @@ def show_gap_callout(df: pd.DataFrame) -> None:
     )
 
 def main():
-    st.write("# 📅 Summer Weekend Fullness")
-
-    df = api.read_ticketmaster_data()
+    df = api.read_ticketmaster_data() # built off ticketmaster data as the merged had different names
     if df is None or df.empty:
         st.error("No Ticketmaster data is available. Run the local ingestion script or refresh the data source.")
 
