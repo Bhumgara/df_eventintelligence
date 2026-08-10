@@ -45,8 +45,6 @@ def streamlit_header(df):
     selected_year = st.selectbox("Year", years, index=len(years) - 1)
 
     df = df[df["event_year"] == selected_year]
-    df = df[df["is_summer"]]
-    df = df[df["is_weekend"]]
 
     if df.empty:
         st.warning("No summer data is available for the selected year.")

@@ -27,4 +27,6 @@ def add_analysis_columns(df: pd.DataFrame) -> pd.DataFrame:
         lambda d: d - pd.Timedelta(days=max(0, d.weekday() - 4))
     )
     df["weekend_start"] = pd.to_datetime(df["weekend_start"]).dt.normalize()
+    df = df[df["is_summer"]]
+    df = df[df["is_weekend"]]
     return df
