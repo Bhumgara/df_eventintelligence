@@ -5,15 +5,18 @@ sys.path.insert(0, str(Path.cwd().parent))
 print(Path.cwd().parent)
 
 from apis import ticketmaster as tck
+from apis import skiddle as sk
 import data_processor.ticketmaster.events_processor as EventsProcessor
 import data_processor.ticketmaster.venues_processor as VenuesProcessor
 import data_processor.ticketmaster.ticketmaster_processor as TicketmasterProcessor
+import data_processor.merging_processor as mp
 import json
 import os
 from pandas import DataFrame
 
 TICKETMASTER_EVENTS_DATA = "tck_events.json"
 TICKETMASTER_VENUES_DATA = "tck_veneus.json"
+SKIDDLE_DATA = "skiddle.json"
 API_DATA_FOLDER = ".api_data"
 
 def read_local_api_data(filename):
@@ -82,6 +85,48 @@ def read_ticketmaster_data() -> DataFrame:
 
     return(merged_df)
 
-def update_session_data() -> DataFrame:
+def call_skiddle_api():
+    endpoint = 'events/search/'
+    filters = {
+        'country': 'GB',
+        'eventcode': 'FEST'
+    }
+    raw_skiddle_response = sk.query_all(endpoint, filters=filters, verbose=True)
+
+    write_api_to_json(SKIDDLE_DATA, raw_skiddle_response)
+
+def read_skiddle_data() -> DataFrame:
+    try:
+        skiddle_file_data = read_local_api_data(TICKETMASTER_EVENTS_DATA)
+    except OSError as e:
+        print("Failed to read local Skiddle data, recalling API.")
+        call_skiddle_api()
+        try:
+            skiddle_file_data = read_local_api_data(TICKETMASTER_EVENTS_DATA)
+        except OSError as e:
+            print("Failed to retrieve Skiddle API data.")
+            return
+
+    events = sk.validate_events(skiddle_file_data)
+    df_skiddle = sk.events_to_df(events)
+
+    return df_skiddle
+
+def read_tckm_skiddle_merged():
+    df_skiddle = read_skiddle_data()
+    df_tckm = read_ticketmaster_data()
+
+    return mp.build_skiddle_tckm_df(df_skiddle, df_tckm)
+
+def update_ticketmaster_data() -> DataFrame:
     call_ticketmaster_api()
     return read_ticketmaster_data()
+
+def update_skiddle_data() -> DataFrame:
+    call_skiddle_api()
+    return read_skiddle_data()
+
+def update_tckm_skiddle_data() -> DataFrame:
+    call_ticketmaster_api()
+    call_skiddle_api()
+    return read_tckm_skiddle_merged()
