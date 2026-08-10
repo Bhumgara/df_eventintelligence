@@ -35,7 +35,7 @@ def streamlit_header(df):
         st.header("Gaps in the UK live music calendar")
 
     with right:
-        st.button("Refresh", on_click=update_data())
+        st.button("Refresh", on_click=update_data(), key="SummerRefreshBtn")
 
     df = add_analysis_columns(df)
     years = sorted(df["event_year"].dropna().unique().tolist())

@@ -28,7 +28,7 @@ with left:
     st.header("Gaps in the UK live music calendar")
 
 with right:
-    st.button("Refresh", on_click=update_data())
+    st.button("Refresh", on_click=update_data(), key="HomeRefreshBtn")
 
 
 st.write("---")
