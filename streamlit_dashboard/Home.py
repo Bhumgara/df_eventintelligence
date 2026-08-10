@@ -36,12 +36,14 @@ def main():
     st.write("---")
     st.write("### Notes on data limitations")
     st.write(
-        "- This analysis uses Ticketmaster festival events and the summer from May through August. "
-        ""
+        "- This analysis uses Ticketmaster festival events and the summer from May through August. ")
+    st.write(
         "- A quiet weekend on Ticketmaster may still host events ticketed through other platforms (Skiddle, Eventbrite, direct box office). Low count is a signal, not proof of absence. "
-        ""
+        )
+    st.write(
         "- The festival filter catches festivals that TicketMaster Flags."
-        ""
+        )
+    st.write(
         "- Not all possible genres of music are present."
     )
 
