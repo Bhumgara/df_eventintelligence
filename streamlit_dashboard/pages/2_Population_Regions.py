@@ -9,6 +9,8 @@ import pgeocode as pg
 import re
 
 from utility import api_handler as api
+from utility import styles
+from streamlit_dashboard.Home import update_data
 
 from pathlib import Path
 import sys
@@ -22,15 +24,16 @@ import apis.census as cs
 def plot_district_populations(districts:pd.DataFrame, plot_to_sl:bool=True):
 
     fig = px.scatter_map(
-        districts,
+        districts.sort_values('population', ascending=True),
         lat="latitude",
         lon="longitude",
-        hover_name="district",
-        hover_data={"population": True},
+        hover_name="county_name",
+        hover_data={"district":True, "population": True, "longitude":False, "latitude":False},
         size="population",
         size_max=12,
         color="population",
-        color_continuous_scale="Viridis",
+        # color_continuous_scale="Viridis",
+        color_continuous_scale=[(0, styles.LIGHT), (0.5, styles.ACCENT), (1, styles.PRIMARY)],
         zoom=5.5,
         height=650,
         opacity=0.5
@@ -78,12 +81,13 @@ def plot_district_event_desity(event_density:pd.DataFrame, plot_to_sl:bool=True)
         event_density,
         lat="latitude",
         lon="longitude",
-        hover_name="venue_postal_district",
-        hover_data={"venue_county":True, "count": True},
+        hover_name="venue_county",
+        hover_data={"venue_postal_district":True, "count": True, "longitude":False, "latitude":False},
         size="count",
         size_max=20,
         color="count",
-        color_continuous_scale="Viridis",
+        # color_continuous_scale="Viridis",
+        color_continuous_scale=[(0, styles.ACCENT), (1, styles.PRIMARY)],
         zoom=5.5,
         height=650,
         opacity=0.5
@@ -106,10 +110,19 @@ def main():
     st.set_page_config(layout='wide')
 
     # ----- Page title & headers -----
-    st.write('# UK Population to Festival Density')
-    st.write('*Are there UK regions where live music event density is low relative to their size or population?*')
-    st.write('---')
+    logo, left, right = st.columns([3,5,2])
+    with logo:
+        st.image("eventintelligence-logo.png", width=300)
 
+    with left:
+        st.write("# UK Population to Festival Density")
+
+    with right:
+        st.button("Refresh", on_click=update_data, key="GenreRefreshBt")
+
+    st.write('*Are there UK regions where live music event density is low relative to their size or population?*')
+
+    # ----- Population by district stats ----- 
     col1, col2 = st.columns(2)
 
     with col1:
@@ -136,6 +149,7 @@ def main():
         # Plot map
         plot_district_populations(df_districts)
 
+    #  ----- Festival density by county ----- 
     with col2:
         st.write('### UK Festival Density by District')
         df_tk = api.read_ticketmaster_data()
@@ -153,6 +167,8 @@ def main():
 
         # Plot map
         plot_district_event_desity(df_event_density)
+
+    
 
 
 if __name__ == '__main__':

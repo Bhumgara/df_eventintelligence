@@ -150,9 +150,9 @@ def main():
         st.write("# UK Festival Genre Representation")
 
     with right:
-        st.button("Refresh", on_click=update_data(), key="GenreRefreshBt")
+        st.button("Refresh", on_click=update_data, key="GenreRefreshBt")
 
-    st.write("Are there genre combinations or audience segments that appear underrepresented in the current festival landscape?")
+    st.write("*Are there genre combinations or audience segments that appear underrepresented in the current festival landscape?*")
     # ----- KPIs ------
     create_genre_kpi(df)
 

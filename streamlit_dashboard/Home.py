@@ -30,21 +30,17 @@ def main():
         st.header("Gaps in the UK live music calendar")
 
     with right:
-        st.button("Refresh", on_click=update_data(), key="HomeRefreshBtn")
+        st.button("Refresh", on_click=update_data, key="HomeRefreshBtn")
 
 
     st.write("---")
     st.write("### Notes on data limitations")
     st.write(
-        "- This analysis uses Ticketmaster festival events and the summer from May through August. ")
-    st.write(
-        "- A quiet weekend on Ticketmaster may still host events ticketed through other platforms (Skiddle, Eventbrite, direct box office). Low count is a signal, not proof of absence. "
-        )
-    st.write(
-        "- The festival filter catches festivals that TicketMaster Flags."
-        )
-    st.write(
-        "- Not all possible genres of music are present."
+        "- This analysis uses Ticketmaster festival events and the summer from May through August. ",
+        "\n",
+        "- A quiet weekend on Ticketmaster may still host events ticketed through other platforms (Skiddle, Eventbrite, direct box office). Low count is a signal, not proof of absence. ",
+        "\n",
+        "- The festival-keyword filter catches common naming patterns but will miss festivals with non-obvious names. Check gap candidates against known festival directories before concluding.",
     )
 
 if __name__ == "__main__":

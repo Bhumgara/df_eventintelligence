@@ -35,7 +35,9 @@ def streamlit_header(df):
         st.header("📅 Summer Weekend Fullness")
 
     with right:
-        st.button("Refresh", on_click=update_data(), key="SummerRefreshBtn")
+        st.button("Refresh", on_click=update_data, key="SummerRefreshBtn")
+
+    st.write("*Which weekends in the summer window are already heavily loaded with competing events, and which are relatively clear?*")
 
     df = add_analysis_columns(df)
     years = sorted(df["event_year"].dropna().unique().tolist())
