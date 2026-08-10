@@ -40,7 +40,9 @@ def main():
         ""
         "- A quiet weekend on Ticketmaster may still host events ticketed through other platforms (Skiddle, Eventbrite, direct box office). Low count is a signal, not proof of absence. "
         ""
-        "- The festival-keyword filter catches common naming patterns but will miss festivals with non-obvious names. Check gap candidates against known festival directories before concluding."
+        "- The festival filter catches festivals that TicketMaster Flags."
+        ""
+        "- Not all possible genres of music are present."
     )
 
 if __name__ == "__main__":
