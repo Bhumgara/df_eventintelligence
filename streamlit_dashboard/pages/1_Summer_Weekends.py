@@ -123,7 +123,6 @@ def main():
 
     st.write("---")
     st.write("## Weekend fullness across the summer.")
-    st.caption("Green = potential gap; red = heavily occupied. All weekends shown, including zero-listing weeks.")
     df_ex = build_weekend_data(df, int(selected_year))
     st.plotly_chart(create_weekend_bar(df_ex), width='stretch')
 
