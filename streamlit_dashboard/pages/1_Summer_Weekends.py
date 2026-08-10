@@ -116,22 +116,24 @@ def show_gap_callout(df: pd.DataFrame) -> None:
         }), width='stretch'
     )
 
+def main():
+    st.write("# 📅 Summer Weekend Fullness")
 
-st.write("# 📅 Summer Weekend Fullness")
+    df = api.read_ticketmaster_data()
+    if df is None or df.empty:
+        st.error("No Ticketmaster data is available. Run the local ingestion script or refresh the data source.")
 
-df = api.read_ticketmaster_data()
-if df is None or df.empty:
-    st.error("No Ticketmaster data is available. Run the local ingestion script or refresh the data source.")
+    selected_year, df = streamlit_header(df)
 
-selected_year, df = streamlit_header(df)
+    st.write("---")
+    st.write("## Weekend fullness across the summer.")
+    st.caption("Green = potential gap; red = heavily occupied. All weekends shown, including zero-listing weeks.")
+    df_ex = build_weekend_data(df, int(selected_year))
+    st.plotly_chart(create_weekend_bar(df_ex), width='stretch')
 
-st.write("---")
-st.write("## Weekend fullness across the summer.")
-st.caption("Green = potential gap; red = heavily occupied. All weekends shown, including zero-listing weeks.")
-df_ex = build_weekend_data(df, int(selected_year))
-st.plotly_chart(create_weekend_bar(df_ex), width='stretch')
+    st.write("---")
+    st.write("## Gap candidates: quietest weekends")
+    show_gap_callout(df_ex)
 
-st.write("---")
-st.write("## Gap candidates: quietest weekends")
-show_gap_callout(df_ex)
-
+if __name__ == "__main__":
+    main()
