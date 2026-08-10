@@ -35,8 +35,13 @@ def get_ticketmaster_data(endpoint, embedded_parts, filters={}) -> list:
     for path in embedded_parts:
         flattened_data = get_nested_value(path, data)
 
-    pages = data["page"]["totalPages"]
-    page_no = data["page"]["number"] + 1
+    try:
+        pages = data["page"]["totalPages"]
+        page_no = data["page"]["number"] + 1
+    except KeyError:
+        print("No page information available.")
+        pages = 1
+        page_no = 1
     
     for page_no in range(min(pages, 5)):
         next_page={'page': page_no}
